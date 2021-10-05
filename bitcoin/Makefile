@@ -14,14 +14,14 @@ run: build
 	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /bin/bash
 
 daemon: build
-	docker container stop `docker container ls -a | grep "$(USERNAME)/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || /bin/true
+	docker container stop `docker container ls -a | grep "$(USERNAME)/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || true
 	docker container run -d --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" "$(USERNAME)/$(CRYPTOCURRENCY)_node"
 
 attach:
 	docker exec -it `docker container ls -a | grep "$(USERNAME)/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` /bin/bash
 
 stop:
-	docker container stop `docker container ls -a | grep "$(USERNAME)/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || /bin/true
+	docker container stop `docker container ls -a | grep "$(USERNAME)/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || true
 
 clean:
 	docker image rm -f "$(USERNAME)/$(CRYPTOCURRENCY)_node"
