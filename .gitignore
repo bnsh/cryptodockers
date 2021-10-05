@@ -1,2 +1,3 @@
 RCS/
 .*.pylint3
+local.mk
