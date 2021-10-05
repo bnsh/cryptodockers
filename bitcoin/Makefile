@@ -4,11 +4,11 @@ build:
 	docker build -t binesh/bitcoin_node .
 
 run: build
-	docker container run -it --rm -v /cryptocurrency/bitcoin:/home/bitcoin -p 8332:8332 binesh/bitcoin_node /bin/bash
+	docker container run -it --rm -v /cryptocurrency/bitcoin:/home/bitcoin -p 127.0.0.1:8332:8332/tcp binesh/bitcoin_node /bin/bash
 
 daemon: build
 	docker container stop `docker container ls -a | grep binesh/bitcoin_node | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || /bin/true
-	docker container run -d --rm -v /cryptocurrency/bitcoin:/home/bitcoin -p 8332:8332 binesh/bitcoin_node
+	docker container run -d --rm -v /cryptocurrency/bitcoin:/home/bitcoin -p 127.0.0.1:8332:8332/tcp binesh/bitcoin_node
 
 attach:
 	docker exec -it `docker container ls -a | grep binesh/bitcoin_node | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` /bin/bash

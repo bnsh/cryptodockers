@@ -4,11 +4,11 @@ build:
 	docker build -t binesh/ethereum_node .
 
 run: build
-	docker container run -it --rm -v /cryptocurrency/ethereum:/home/ethereum -p 8545:8545 binesh/ethereum_node /bin/bash
+	docker container run -it --rm -v /cryptocurrency/ethereum:/home/ethereum -p 127.0.0.1:8545:8545/tcp binesh/ethereum_node /bin/bash
 
 daemon: build
 	docker container stop `docker container ls -a | grep binesh/ethereum_node | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || /bin/true
-	docker container run -d --rm -v /cryptocurrency/ethereum:/home/ethereum -p 8545:8545 binesh/ethereum_node
+	docker container run -d --rm -v /cryptocurrency/ethereum:/home/ethereum -p 127.0.0.1:8545:8545/tcp binesh/ethereum_node
 
 attach:
 	docker exec -it `docker container ls -a | grep binesh/ethereum_node | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` /bin/bash
