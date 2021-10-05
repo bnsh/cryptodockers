@@ -5,6 +5,9 @@ RPCPORT=8545
 all:
 
 build:
+	docker image ls -a | grep "$(USERNAME)/$(CRYPTOCURRENCY)_node" || docker build -t "$(USERNAME)/$(CRYPTOCURRENCY)_node" .
+
+build-force:
 	docker build -t "$(USERNAME)/$(CRYPTOCURRENCY)_node" .
 
 run: build
