@@ -1,25 +1,29 @@
+CRYPTOCURRENCY_ROOT="/cryptocurrency"
+CRYPTOCURRENCY="bitcoin"
+RPCPORT="8332"
+
 all:
 
 build:
-	docker build -t binesh/bitcoin_node .
+	docker build -t "binesh/$(CRYPTOCURRENCY)_node" .
 
 run: build
-	docker container run -it --rm -v /cryptocurrency/bitcoin:/home/bitcoin -p 127.0.0.1:8332:8332/tcp binesh/bitcoin_node /bin/bash
+	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" "binesh/$(CRYPTOCURRENCY)_node" /bin/bash
 
 daemon: build
-	docker container stop `docker container ls -a | grep binesh/bitcoin_node | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || /bin/true
-	docker container run -d --rm -v /cryptocurrency/bitcoin:/home/bitcoin -p 127.0.0.1:8332:8332/tcp binesh/bitcoin_node
+	docker container stop `docker container ls -a | grep "binesh/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || /bin/true
+	docker container run -d --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" "binesh/$(CRYPTOCURRENCY)_node"
 
 attach:
-	docker exec -it `docker container ls -a | grep binesh/bitcoin_node | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` /bin/bash
+	docker exec -it `docker container ls -a | grep "binesh/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` /bin/bash
 
 stop:
-	docker container stop `docker container ls -a | grep binesh/bitcoin_node | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || /bin/true
+	docker container stop `docker container ls -a | grep "binesh/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || /bin/true
 
 clean:
-	docker image rm -f binesh/bitcoin_node
+	docker image rm -f "binesh/$(CRYPTOCURRENCY)_node"
 
 cache: build
-	docker container run -it --rm -v /cryptocurrency:/cryptocurrency binesh/bitcoin_node /usr/bin/rsync -av --progress --delete --exclude=.bitcoin/ /home/bitcoin/ /cryptocurrency/bitcoin/
-	docker container run -it --rm -v /cryptocurrency:/cryptocurrency binesh/bitcoin_node /usr/bin/rsync -av --progress --delete --exclude=.bitcoin/ /home/bitcoin/ /cryptocurrency/pristine/bitcoin/
-	docker container run -it --rm -v /cryptocurrency:/cryptocurrency binesh/bitcoin_node /bin/sh -c '/bin/mkdir -p /cryptocurrency/bitcoin/.bitcoin /cryptocurrency/pristine/bitcoin/.bitcoin/; /bin/chown bitcoin:bitcoin /cryptocurrency/bitcoin/.bitcoin /cryptocurrency/pristine/bitcoin/.bitcoin/'
+	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "binesh/$(CRYPTOCURRENCY)_node" /usr/bin/rsync -av --progress --delete --exclude=".$(CRYPTOCURRENCY)/" "/home/$(CRYPTOCURRENCY)/" "/cryptocurrency/$(CRYPTOCURRENCY)/"
+	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "binesh/$(CRYPTOCURRENCY)_node" /usr/bin/rsync -av --progress --delete --exclude=".$(CRYPTOCURRENCY)/" "/home/$(CRYPTOCURRENCY)/" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/"
+	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "binesh/$(CRYPTOCURRENCY)_node" /bin/sh -c '/bin/mkdir -p "/cryptocurrency/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)/"; /bin/chown "$(CRYPTOCURRENCY):$(CRYPTOCURRENCY)" "/cryptocurrency/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)/"'
