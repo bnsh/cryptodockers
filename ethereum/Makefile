@@ -1,6 +1,6 @@
-CRYPTOCURRENCY_ROOT="/cryptocurrency"
-CRYPTOCURRENCY="ethereum"
-RPCPORT="8545"
+include ../local.mk
+CRYPTOCURRENCY=ethereum
+RPCPORT=8545
 
 all:
 

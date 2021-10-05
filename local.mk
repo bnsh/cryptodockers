@@ -1,0 +1,1 @@
+CRYPTOCURRENCY_ROOT=/cryptocurrency

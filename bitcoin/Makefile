@@ -1,6 +1,6 @@
-CRYPTOCURRENCY_ROOT="/cryptocurrency"
-CRYPTOCURRENCY="bitcoin"
-RPCPORT="8332"
+include ../local.mk
+CRYPTOCURRENCY=bitcoin
+RPCPORT=8332
 
 all:
 
