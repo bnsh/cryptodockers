@@ -18,13 +18,13 @@ def grab_cookie():
     cookie = None
     for container in client.containers.list():
         if name in set(container.image.attrs["RepoTags"]):
-            stream, stat = container.get_archive("/home/bitcoin/.bitcoin/.cookie")
-            tarbin = b"".join([chunk for chunk in stream])
+            stream, dummy_stat = container.get_archive("/home/bitcoin/.bitcoin/.cookie")
+            tarbin = b"".join(chunk for chunk in stream)
             with tarfile.open(mode="r", fileobj=io.BytesIO(tarbin)) as tarf:
                 cookiefile = tarf.getmember(".cookie")
                 cookie = tarf.extractfile(cookiefile).read().decode("utf-8")
     return cookie
-            
+
 
 def main():
     cookie = grab_cookie()
