@@ -7,13 +7,22 @@
     What a giant pain.
 """
 
+import os
 import io
+import configparser
 import tarfile
 import docker
 from bitcoin.rpc import RawProxy
 
+def grab_user():
+    config = configparser.ConfigParser()
+    localmkfn = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../local.mk"))
+    with open(localmkfn, "rt", encoding="utf-8") as cfp:
+        config.read_string(f"[DEFAULT]\n{cfp.read():s}\n")
+    return config["DEFAULT"]["USERNAME"]
+
 def grab_cookie():
-    name = "binesh/bitcoin_node:latest"
+    name = f"{grab_user()}/bitcoin_node:latest"
     client = docker.from_env()
     cookie = None
     for container in client.containers.list():
