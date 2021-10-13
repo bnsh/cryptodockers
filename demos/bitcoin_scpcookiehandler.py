@@ -9,7 +9,7 @@ import tarfile
 import tempfile
 from subprocess import check_call
 import docker
-from bitcoin_common import grab_config
+from common_config import grab_config
 
 def grab_cookie():
     config = grab_config()

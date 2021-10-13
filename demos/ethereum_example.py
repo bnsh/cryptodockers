@@ -3,10 +3,14 @@
 
 """Ethereum example."""
 
+from common_config import grab_config
 from web3 import Web3
 
 def main():
-    eth = Web3(Web3.HTTPProvider('http://raspberrypi2.home.hex21.com:19142/ethereum/'))
+    config = grab_config()
+    host = config["REMOTEHOST"]
+    port = int(config["REMOTEPORT"])
+    eth = Web3(Web3.HTTPProvider('http://{host:s}:{port:d}/ethereum/'))
     if eth.isConnected():
         print(eth.eth.get_block('latest'))
 

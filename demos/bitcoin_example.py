@@ -11,7 +11,7 @@ import os
 import tempfile
 from subprocess import check_call
 from bitcoin.rpc import RawProxy
-from bitcoin_common import grab_config
+from common_config import grab_config
 
 def grab_remote_cookie():
     config = grab_config()
@@ -27,7 +27,7 @@ def grab_remote_cookie():
         check_call([
             scplocation,
             "-q",
-            f"{scphost}:/this/location/should/be/cookie",
+            f"{scphost:s}:/this/location/should/be/cookie",
             cookiefilename
         ])
         with open(cookiefilename, "rt", encoding="utf-8") as cfp:
@@ -35,9 +35,12 @@ def grab_remote_cookie():
     return cookie
 
 def main():
+    config = grab_config()
+    host = config["REMOTEHOST"]
+    port = int(config["REMOTEPORT"])
     cookie = grab_remote_cookie()
     if cookie:
-        proxy = RawProxy(service_url=f"http://{cookie}@raspberrypi.home.hex21.com:19142/bitcoin/")
+        proxy = RawProxy(service_url=f"http://{cookie:s}@{host:s}:{port:d}/bitcoin/")
         info = proxy.getblockchaininfo()
         print(info["blocks"])
 
