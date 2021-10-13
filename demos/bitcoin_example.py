@@ -36,8 +36,8 @@ def grab_remote_cookie():
 
 def main():
     config = grab_config()
-    host = config["REMOTEHOST"]
-    port = int(config["REMOTEPORT"])
+    host = config["BITCOINHOST"]
+    port = int(config["BITCOINPORT"])
     cookie = grab_remote_cookie()
     if cookie:
         proxy = RawProxy(service_url=f"http://{cookie:s}@{host:s}:{port:d}/bitcoin/")
