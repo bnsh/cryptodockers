@@ -6,7 +6,7 @@
 from web3 import Web3
 
 def main():
-    eth = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+    eth = Web3(Web3.HTTPProvider('http://raspberrypi2.home.hex21.com:19142/ethereum/'))
     if eth.isConnected():
         print(eth.eth.get_block('latest'))
 
