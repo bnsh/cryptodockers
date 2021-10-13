@@ -10,7 +10,7 @@ def main():
     config = grab_config()
     host = config["ETHEREUMHOST"]
     port = int(config["ETHEREUMPORT"])
-    eth = Web3(Web3.HTTPProvider('http://{host:s}:{port:d}/ethereum/'))
+    eth = Web3(Web3.HTTPProvider(f'http://{host:s}:{port:d}/ethereum/'))
     if eth.isConnected():
         print(eth.eth.get_block('latest'))
 
