@@ -10,7 +10,7 @@
 import os
 import tempfile
 from subprocess import check_call
-from bitcoin.rpc import RawProxy
+import bitcoin.rpc as bitcoin_rpc
 from common_config import grab_config
 
 def grab_remote_cookie():
@@ -47,15 +47,15 @@ def grab_raw_proxy():
             cookie = cookiefp.read()
         if cookie:
             try:
-                proxy = RawProxy(service_url=f"http://{cookie:s}@{host:s}:{port:d}/bitcoin/")
-            except bitcoin.rpc.JSONRPCError:
+                proxy = bitcoin_rpc.RawProxy(service_url=f"http://{cookie:s}@{host:s}:{port:d}/bitcoin/")
+            except bitcoin_rpc.JSONRPCError:
                 os.unlink(cookie_fn)
                 proxy = None
     if proxy is None:
         cookie = grab_remote_cookie()
         try:
-            proxy = RawProxy(service_url=f"http://{cookie:s}@{host:s}:{port:d}/bitcoin/")
-        except bitcoin.rpc.JSONRPCError:
+            proxy = bitcoin_rpc.RawProxy(service_url=f"http://{cookie:s}@{host:s}:{port:d}/bitcoin/")
+        except bitcoin_rpc.JSONRPCError:
             proxy = None
         if proxy is not None:
             with open(cookie_fn, "wt", encoding="utf-8") as cookiefp:

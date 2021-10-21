@@ -3,8 +3,8 @@
 
 """Ethereum example."""
 
-from common_config import grab_config
 from web3 import Web3
+from common_config import grab_config
 
 def main():
     config = grab_config()

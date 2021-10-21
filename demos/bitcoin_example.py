@@ -3,7 +3,7 @@
 
 """Bitcoin example: From Page 49 of "Mastering Bitcoin", just made pylint clean is all."""
 
-from bitcoin_lib import grab_raw_proxy()
+from bitcoin_lib import grab_raw_proxy
 
 def main():
     proxy = grab_raw_proxy()
