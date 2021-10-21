@@ -5,4 +5,4 @@ BITCOINPORT=16949
 ETHEREUMHOST=ethereumhost
 ETHEREUMPORT=17228
 SCPLOCATION=/usr/bin/scp
-SCPHOST=bitcoin_scpocokiehandler
+SCPHOST=bitcoin_scpcookiehandler
