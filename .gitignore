@@ -2,3 +2,4 @@ RCS/
 __pycache__
 .*.pylint3
 local.mk
+.bitcoin-cookie
