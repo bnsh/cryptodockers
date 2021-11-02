@@ -17,6 +17,8 @@ RUN \
 		sudo \
 		git \
 		vim \
+	&& wget -O /tmp/go.linux-arm64.tar.gz https://golang.org/dl/go1.17.2.linux-arm64.tar.gz \
+	&& rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.linux-amd64.tar.gz \
 	&& echo "ethereum ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-ethereum \
 	&& /bin/true
 

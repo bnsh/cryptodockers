@@ -22,10 +22,10 @@ After installing Ubuntu on the Pi, do
 15. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make cache )```
 16. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make daemon )```
 17. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make attach )```
-18. **If** this is an ethereum node:
-19. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )```
-20. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
-21. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make daemon )```
-22. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make attach )```
-
-Actually. I'll probably turn all this into a Makefile.
+18. Really there's a bunch of things to do from here.
+19. **If** this is an ethereum node:
+20. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )```
+21. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
+22. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make daemon )```
+23. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make attach )```
+24. Really there's a bunch of things to do from here.
