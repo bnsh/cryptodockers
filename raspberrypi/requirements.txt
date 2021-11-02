@@ -17,7 +17,6 @@ cupshelpers
 cytoolz
 defer
 docker
-duplicity
 eth-abi
 eth-account
 eth-hash
