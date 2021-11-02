@@ -27,6 +27,6 @@ clean:
 	docker image rm -f "$(USERNAME)/$(CRYPTOCURRENCY)_node"
 
 cache: build
+	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /bin/sh -c '/bin/mkdir -p "/cryptocurrency/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)/"; /bin/chown "$(CRYPTOCURRENCY):$(CRYPTOCURRENCY)" "/cryptocurrency/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)/"'
 	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /usr/bin/rsync -av --progress --delete --exclude=".$(CRYPTOCURRENCY)/" "/home/$(CRYPTOCURRENCY)/" "/cryptocurrency/$(CRYPTOCURRENCY)/"
 	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /usr/bin/rsync -av --progress --delete --exclude=".$(CRYPTOCURRENCY)/" "/home/$(CRYPTOCURRENCY)/" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/"
-	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /bin/sh -c '/bin/mkdir -p "/cryptocurrency/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)/"; /bin/chown "$(CRYPTOCURRENCY):$(CRYPTOCURRENCY)" "/cryptocurrency/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)/"'
