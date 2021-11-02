@@ -13,6 +13,7 @@ After installing Ubuntu on the Pi, do
 7. `cd src`
 8. `git clone https://github.com/bnsh/cryptodockers.git`
 9. ```sudo apt install -y `cat ${HOME}/src/cryptodockers/raspberrypi/apt-packages.txt` ```
+   *non-super users should _not_ be able to capture packets.*
 10. `sudo python3 -m pip install -U -r ${HOME}/src/cryptodockers/raspberrypi/requirements.txt`
 11. ```sudo addgroup "`id -nu`" docker```
 
