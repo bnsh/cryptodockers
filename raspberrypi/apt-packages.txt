@@ -18,6 +18,7 @@ hostname
 i2c-tools
 init
 language-pack-en-base
+libcairo2-dev
 libdebconfclient0
 libsnmp-base
 libsnmp40

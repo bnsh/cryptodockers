@@ -15,10 +15,7 @@ command-not-found
 cryptography
 cupshelpers
 cytoolz
-dbus-python
 defer
-distro
-distro-info
 docker
 duplicity
 eth-abi
@@ -30,7 +27,6 @@ eth-rlp
 eth-typing
 eth-utils
 fasteners
-future
 hexbytes
 httplib2
 idna
@@ -39,7 +35,6 @@ jeepney
 jsonschema
 keyring
 language-selector
-launchpadlib
 lazr.restfulclient
 lazr.uri
 lockfile
@@ -70,10 +65,8 @@ pymacaroons
 PyNaCl
 pyRFC3339
 pyrsistent
-python-apt
 python-bitcoinlib
 python-dateutil
-python-debian
 pytz
 pyxdg
 PyYAML
@@ -84,14 +77,9 @@ SecretStorage
 simplejson
 six
 ssh-import-id
-systemd-python
-testresources
 toolz
 typing-extensions
-ubuntu-advantage-tools
-ubuntu-drivers-common
 ufw
-unattended-upgrades
 urllib3
 varint
 wadllib
