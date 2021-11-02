@@ -1,6 +1,6 @@
 # Raspberry Pi Notes
 
-So, first, all this is based on [Ubuntu Desktop 21.10 for Raspberry Pi](https://ubuntu.com/download/raspberry-pi)
+So, first, all this is based on [Ubuntu Desktop 21.04 for Raspberry Pi](https://ubuntu.com/download/raspberry-pi) It *needs* to be 21.04, *not* 21.10! Unfortunately, 21.10 seems to have [an issue with Docker](https://forum.storj.io/t/ubuntu-21-10-os-update-problem-with-the-node/15763).
 
 After installing Ubuntu on the Pi, do
 
