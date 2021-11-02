@@ -19,8 +19,8 @@ RUN \
 		wget \
 	&& wget -O /tmp/go.linux-arm64.tar.gz https://golang.org/dl/go1.17.2.linux-arm64.tar.gz \
 	&& rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.linux-amd64.tar.gz \
-	&& ln -s /usr/local/go/bin/go /usr/local/bin/go &&
-	&& ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt &&
+	&& ln -s /usr/local/go/bin/go /usr/local/bin/go \
+	&& ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt \
 	&& echo "ethereum ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-ethereum \
 	&& /bin/true
 
