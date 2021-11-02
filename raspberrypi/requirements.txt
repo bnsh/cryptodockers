@@ -58,7 +58,6 @@ protobuf
 pycairo
 pycryptodome
 pycups
-PyGObject
 PyJWT
 pymacaroons
 PyNaCl
