@@ -16,16 +16,18 @@ After installing Ubuntu on the Pi, do
    *non-super users should _not_ be able to capture packets.*
 10. `sudo python3 -m pip install -U -r ${HOME}/src/cryptodockers/raspberrypi/requirements.txt`
 11. ```sudo addgroup "`id -nu`" docker```
-12. ```sudo mkdir -p /cryptocurrency``` **If you have an external hard drive, there are additional steps here!**
-13. **If** this is a bitcoin node:
-14. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make build-force )```
-15. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make cache )```
-16. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make daemon )```
-17. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make attach )```
-18. **If** this is an ethereum node:
-19. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )```
-20. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
-21. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make daemon )```
-22. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make attach )```
+12. ```sudo /sbin/shutdown -r now```
+13. **Copy local-demo.mk to local.mk and adjust parameters to your needs. Probably the only thing that might need changing is USERNAME.**
+14. ```sudo mkdir -p /cryptocurrency``` **If you have an external hard drive, there are additional steps here!** (Also, if you adjusted the "CRYPTOCURRENCY_ROOT" in local.mk, then this directory will need to be the same as whatever you specified there.)
+15. **If** this is a bitcoin node:
+16. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make build-force )```
+17. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make cache )```
+18. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make daemon )```
+19. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make attach )```
+20. **If** this is an ethereum node:
+21. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )```
+22. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
+23. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make daemon )```
+24. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make attach )```
 
-Actually. I'll probably turn all this into a Makefile.
+Actually. I'll probably turn all this into a Makefile. And, `apt-packages.txt` and `requirements.txt` are a giant mess. I need to slim those down to the minimum requirements.
