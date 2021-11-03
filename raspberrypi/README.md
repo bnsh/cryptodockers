@@ -16,12 +16,12 @@ After installing Ubuntu on the Pi, do
 10. ```sudo /sbin/shutdown -r now```
 11. **Copy local-demo.mk to local.mk and adjust parameters to your needs. The only thing that might need changing is USERNAME.**
 12. ```sudo mkdir -p /cryptocurrency``` **If you have an external hard drive, there are additional steps here!** (Also, if you adjusted the "CRYPTOCURRENCY_ROOT" in local.mk, then this directory will need to be the same as whatever you specified there.)
-13. ```sudo rm -f /etc/nginx/sites-enabled/default```
+13. ```sudo rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/cryptoproxy```
 14. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/cryptoproxy" /etc/nginx/sites-available/cryptoproxy```
 15. ```sudo ln -s /etc/nginx/sites-available/cryptoproxy /etc/nginx/sites-enabled/cryptoproxy```
 16. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/bitcoin.conf" /etc/nginx/snippets/```
 17. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/ethereum.conf" /etc/nginx/snippets/```
-18. ```systemctl restart nginx```
+18. ```sudo systemctl restart nginx```
 19. **If** this is a bitcoin node:
 20. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make build-force )``` _# Took 10m7.479s_
 21. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make cache )```
