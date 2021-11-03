@@ -20,6 +20,6 @@ On whatever machine that's running the bitcoin docker:
 
 1. Add this line to `${HOME}/.ssh/authorized_keys`
 
-        command="/usr/bin/env python3 ${HOME}/src/cryptocurrency-docker/demos/bitcoin_scpcookiehandler.py" {pasted public key}
+        command="/usr/bin/env python3 ${HOME}/src/cryptodockers/demos/bitcoin_scpcookiehandler.py" {pasted public key}
 
 That _should_ be it..
