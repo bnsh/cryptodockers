@@ -1,4 +1,3 @@
-
 # Raspberry Pi Notes
 
 So, first, all this is based on [Ubuntu Desktop 21.04 for Raspberry Pi](https://ubuntu.com/download/raspberry-pi) It *needs* to be 21.04, *not* 21.10! Unfortunately, 21.10 seems to have [an issue with Docker](https://forum.storj.io/t/ubuntu-21-10-os-update-problem-with-the-node/15763).
@@ -18,13 +17,13 @@ After installing Ubuntu on the Pi, do
 11. **Copy local-demo.mk to local.mk and adjust parameters to your needs. The only thing that might need changing is USERNAME.**
 12. ```sudo mkdir -p /cryptocurrency``` **If you have an external hard drive, there are additional steps here!** (Also, if you adjusted the "CRYPTOCURRENCY_ROOT" in local.mk, then this directory will need to be the same as whatever you specified there.)
 13. **If** this is a bitcoin node:
-14. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make build-force )``` _# Took xxxs_
+14. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make build-force )``` _# Took 10m7.479s_
 15. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make cache )```
 16. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make daemon )```
 17. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make attach )```
 18. Really there's a bunch of things to do from here.
 19. **If** this is an ethereum node:
-20. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )``` _# Took xxxs_
+20. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )``` _# Took 162m5.510s_
 21. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
 22. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make daemon )```
 23. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make attach )```
