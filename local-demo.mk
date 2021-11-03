@@ -1,8 +1,6 @@
 CRYPTOCURRENCY_ROOT=/cryptocurrency
 USERNAME=binesh
 BITCOINHOST=bitcoinhost
-BITCOINPORT=16949
 ETHEREUMHOST=ethereumhost
-ETHEREUMPORT=17228
 SCPLOCATION=/usr/bin/scp
 SCPHOST=bitcoin_scpcookiehandler

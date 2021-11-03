@@ -37,7 +37,6 @@ def grab_remote_cookie():
 def grab_raw_proxy():
     config = grab_config()
     host = config["BITCOINHOST"]
-    port = int(config["BITCOINPORT"])
 
     cookie_fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".bitcoin-cookie")
     proxy = None
@@ -47,14 +46,14 @@ def grab_raw_proxy():
             cookie = cookiefp.read()
         if cookie:
             try:
-                proxy = bitcoin_rpc.RawProxy(service_url=f"http://{cookie:s}@{host:s}:{port:d}/bitcoin/")
+                proxy = bitcoin_rpc.RawProxy(service_url=f"http://{cookie:s}@{host:s}/bitcoin/")
             except bitcoin_rpc.JSONRPCError:
                 os.unlink(cookie_fn)
                 proxy = None
     if proxy is None:
         cookie = grab_remote_cookie()
         try:
-            proxy = bitcoin_rpc.RawProxy(service_url=f"http://{cookie:s}@{host:s}:{port:d}/bitcoin/")
+            proxy = bitcoin_rpc.RawProxy(service_url=f"http://{cookie:s}@{host:s}/bitcoin/")
         except bitcoin_rpc.JSONRPCError:
             proxy = None
         if proxy is not None:

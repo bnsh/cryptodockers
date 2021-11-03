@@ -2,3 +2,4 @@ docker.io
 openssh-server
 make
 python3-pip
+nginx-full
