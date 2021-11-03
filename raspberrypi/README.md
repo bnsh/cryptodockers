@@ -18,7 +18,7 @@ After installing Ubuntu on the Pi, do
 12. ```sudo mkdir -p /cryptocurrency``` **If you have an external hard drive, there are additional steps here!** (Also, if you adjusted the "CRYPTOCURRENCY_ROOT" in local.mk, then this directory will need to be the same as whatever you specified there.)
 13. ```sudo rm -f /etc/nginx/sites-enabled/default```
 14. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/cryptoproxy" /etc/nginx/sites-available/cryptoproxy```
-15. ```sudo ln -s /etc/nginx/sites-available/cryptoproxy /etc/nginx/sites-enables/cryptoproxy```
+15. ```sudo ln -s /etc/nginx/sites-available/cryptoproxy /etc/nginx/sites-enabled/cryptoproxy```
 16. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/bitcoin.conf" /etc/nginx/snippets/```
 17. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/ethereum.conf" /etc/nginx/snippets/```
 18. ```systemctl restart nginx```
