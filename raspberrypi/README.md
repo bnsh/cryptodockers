@@ -32,4 +32,4 @@ After installing Ubuntu on the Pi, do
 26. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
 27. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make ethereum.conf )```
 28. ```sudo cp -p "${HOME}/src/cryptodockers/ethereum/ethereum.conf" /etc/supervisor/conf.d/```
-29. ```sudo systemctl reload```
+29. ```sudo /sbin/shutdown -r now```
