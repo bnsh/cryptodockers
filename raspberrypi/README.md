@@ -23,13 +23,13 @@ After installing Ubuntu on the Pi, do
 17. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/ethereum.conf" /etc/nginx/snippets/```
 18. ```sudo systemctl restart nginx```
 19. \# **If** this is a bitcoin node:
-20. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make build-force )``` _# Took 10m7.479s_
+20. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make build-force )``` _# Took 162m5.510s_
 21. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make cache )```
 22. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make daemon )```
 23. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make attach )```
 24. \# Really there's a bunch of things to do from here.
 25. \# **If** this is an ethereum node:
-26. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )``` _# Took 162m5.510s_
+26. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )``` _# Took 10m7.479s_
 27. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
 28. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make daemon )```
 29. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make attach )```
