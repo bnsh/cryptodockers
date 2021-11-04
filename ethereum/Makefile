@@ -13,6 +13,14 @@ build-force:
 run: build
 	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /bin/bash
 
+$(CRYPTOCURRENCY).conf: build $(CRYPTOCURRENCY).conf.tmpl
+	\
+		CRYPTOCURRENCY="$(CRYPTOCURRENCY)" \
+		CRYPTOCURRENCY_ROOT="$(CRYPTOCURRENCY_ROOT)" \
+		RPCPORT="$(RPCPORT)" \
+		USERNAME="$(USERNAME)" \
+		envsubst < $(CRYPTOCURRENCY).conf.tmpl > $(CRYPTOCURRENCY).conf
+
 daemon: build
 	docker container stop `docker container ls -a | grep "$(USERNAME)/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || true
 	docker container run -d --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" "$(USERNAME)/$(CRYPTOCURRENCY)_node"
