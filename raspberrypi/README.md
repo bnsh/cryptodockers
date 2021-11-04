@@ -31,5 +31,5 @@ After installing Ubuntu on the Pi, do
 25. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )``` _# Took 10m7.479s_
 26. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
 27. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make ethereum.conf )```
-28. ```sudo cp -p "${HOME}/src/cryptodockers/ethereum/ethereum.conf" /etc/supervisor/conf.d/```
+28. ```sudo cp -p "${HOME}/src/cryptodockers/ethereum-pi/ethereum.conf" /etc/supervisor/conf.d/```
 29. ```sudo /sbin/shutdown -r now```
