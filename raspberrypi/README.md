@@ -8,7 +8,7 @@ After installing Ubuntu on the Pi, do
 2. `sudo apt upgrade -y` _# Took 15m30.042s_
 3. `sudo apt install -y git` _# Took 15.614s_
 4. `mkdir -p "${HOME}/src/"`
-5. `cd src`
+5. `cd "${HOME}/src/"`
 6. `git clone https://github.com/bnsh/cryptodockers.git` _# Took 0.558s_
 7. ```sudo apt install -y `cat ${HOME}/src/cryptodockers/raspberrypi/apt-packages.txt` ``` _# Took 2m20.794s_
 8. `sudo python3 -m pip install -U -r ${HOME}/src/cryptodockers/raspberrypi/requirements.txt` _# Took 2m17.157s_
