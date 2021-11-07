@@ -47,6 +47,8 @@ def grab_raw_proxy():
         if cookie:
             try:
                 proxy = bitcoin_rpc.RawProxy(service_url=f"http://{cookie:s}@{host:s}/bitcoin/")
+                # Check to see if the proxy is valid.
+                dummy_info = proxy.getblockchaininfo()
             except bitcoin_rpc.JSONRPCError:
                 os.unlink(cookie_fn)
                 proxy = None
@@ -54,6 +56,8 @@ def grab_raw_proxy():
         cookie = grab_remote_cookie()
         try:
             proxy = bitcoin_rpc.RawProxy(service_url=f"http://{cookie:s}@{host:s}/bitcoin/")
+            # Check to see if the proxy is valid.
+            dummy_info = proxy.getblockchaininfo()
         except bitcoin_rpc.JSONRPCError:
             proxy = None
         if proxy is not None:
