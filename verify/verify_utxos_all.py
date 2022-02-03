@@ -85,6 +85,7 @@ def verify(proxy, blockidx, utxos):
                     # https://en.bitcoin.it/w/images/en/7/70/Bitcoin_OpCheckSig_InDetail.png
                     # https://www.blockchain.com/btc/block/170
                     # Let's use block 170 as in that doc in these comments:
+                    # Pizza transaction explanation: https://bitcoin.stackexchange.com/questions/32305/how-does-the-ecdsa-verification-algorithm-work-during-transaction
 
                     print(f"{blockidx:d}: {transaction_id:s}:{vin_idx:d}: Burned {purported_spend_txid:s}:{purported_spend_idx:d}")
                     # 170: f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16:0: Burned 0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9:0
