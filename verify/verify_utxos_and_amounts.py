@@ -17,6 +17,10 @@ def verify(proxy, blockidx, utxos):
 
     transaction_ids = block["tx"]
 
+    coinbase_amount = None
+    total_tip = 0
+    total_in = 0
+    total_out = 0
     for transaction_id in transaction_ids:
         raw_tx = proxy.getrawtransaction(transaction_id)
         decoded_tx = proxy.decoderawtransaction(raw_tx)
@@ -25,18 +29,23 @@ def verify(proxy, blockidx, utxos):
 
         # EITHER a coinbase is in our vins, or it's not in _any_ of them.
         assert (all("coinbase" in vin for vin in vins) and len(vins) == 1) or all("coinbase" not in vin for vin in vins)
-        coinbase_amount = 0
         in_amount = 0
         out_amount = 0
         if all("coinbase" in vin for vin in vins) and len(vins) == 1:
             # If this is the coinbase transaction
-            coinbase_amount = block_reward
+            assert coinbase_amount is None
+            coinbase_amount = sum(vout["value"] for vout in vouts)
+            tip = 0
         else:
             in_amount = sum(utxos[(vin["txid"], vin["vout"])]["value"] for vin in vins if "coinbase" not in vin)
-        out_amount = sum(vout["value"] for vout in vouts)
-        tip = out_amount - (in_amount + coinbase_amount)
+            out_amount = sum(vout["value"] for vout in vouts)
+            tip = in_amount - out_amount
 
-        assert tip >= 0
+        total_in += in_amount
+        total_out += out_amount
+        total_tip += tip
+
+        assert tip >= 0, (blockidx, blockhash, transaction_id, tip)
 
         for vin_idx, vin in enumerate(vins):
             # Coinbase transactions have no "inputs" to check, they come from God (Satoshi).
@@ -55,6 +64,10 @@ def verify(proxy, blockidx, utxos):
 
         # Update the Unspent Transaction Outputs with this blocks outputs.
         utxos.update({(transaction_id, vout_idx): vout for vout_idx, vout in enumerate(vouts)})
+
+    assert coinbase_amount is not None
+    assert total_tip == total_in - total_out
+    assert coinbase_amount == block_reward + total_tip, (coinbase_amount, block_reward, total_tip)
 #pylint: enable=too-many-locals
 
 def main():
