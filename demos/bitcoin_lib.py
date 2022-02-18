@@ -7,6 +7,7 @@
     What a giant pain.
 """
 
+import sys
 import os
 import re
 import bz2
