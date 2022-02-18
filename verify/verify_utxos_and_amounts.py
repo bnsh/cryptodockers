@@ -4,9 +4,10 @@
 """This program starts at block _1_ and verifies Unspent Transaction Outputs and amounts.
    It does _not_ verify the scripts."""
 
+# import hashlib
 from decimal import Decimal
 from pprint import pprint
-from bitcoin_lib import grab_raw_proxy
+from bitcoin_lib import grab_raw_proxy, retrieve_utxos
 
 #pylint: disable=too-many-locals
 def verify(proxy, blockidx, utxos):
@@ -67,16 +68,19 @@ def verify(proxy, blockidx, utxos):
 
     assert coinbase_amount is not None
     assert total_tip == total_in - total_out
-    assert coinbase_amount == block_reward + total_tip, (coinbase_amount, block_reward, total_tip)
+    assert coinbase_amount <= block_reward + total_tip, (coinbase_amount, block_reward, total_tip)
 #pylint: enable=too-many-locals
+
 
 def main():
     proxy = grab_raw_proxy()
 
-    utxos = {}
+
     maxblock = proxy.getblockchaininfo()["blocks"]
 
-    for blockidx in range(1, maxblock):
+    utxos, last_blockidx = retrieve_utxos()
+
+    for blockidx in range(1+last_blockidx, maxblock):
         verify(proxy, blockidx, utxos)
 
 if __name__ == "__main__":

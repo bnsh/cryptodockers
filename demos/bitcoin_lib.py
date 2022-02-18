@@ -8,6 +8,9 @@
 """
 
 import os
+import re
+import bz2
+import pickle
 import tempfile
 from subprocess import check_call
 import bitcoin.rpc as bitcoin_rpc
@@ -64,6 +67,36 @@ def grab_raw_proxy():
             with open(cookie_fn, "wt", encoding="utf-8") as cookiefp:
                 cookiefp.write(cookie)
     return proxy
+
+def dump_utxos(blockidx, utxos):
+    fname = f"/tmp/utxos/utxos-{blockidx:d}.pickle.bz2"
+    if not os.path.exists(os.path.dirname(fname)):
+        os.makedirs(os.path.dirname(fname), mode=0o775)
+    with bz2.open(fname, "wb") as pfp:
+        pickle.dump({
+            "blockidx": blockidx,
+            "utxos": utxos
+        }, pfp)
+    print(f"{fname:s}\t{os.stat(fname).st_size:d}")
+
+def retrieve_utxos(utxofn=None):
+    if utxofn is None:
+        utxos_dir = "/tmp/utxos"
+        utxofn = None
+        if os.path.exists(utxos_dir):
+            utxos_re = re.compile(r'^(.*/)?utxos-([0-9]+).pickle.bz2')
+            utxofns = sorted([os.path.join(utxos_dir, fname) for fname in os.listdir(utxos_dir) if utxos_re.match(fname) is not None], key=lambda fname: int(utxos_re.match(fname).group(2)), reverse=True)
+            utxofn = utxofns[0]
+
+    utxos, blockidx = {}, 0
+    if utxofn is not None:
+        with bz2.open(utxofn, "rb") as pfp:
+            sys.stderr.write(f"Loading {utxofn:s}...\n")
+            raw = pickle.load(pfp)
+            sys.stderr.write(f"Loaded {utxofn:s}\n")
+            utxos, blockidx = raw["utxos"], raw["blockidx"]
+
+    return utxos, blockidx
 
 def main():
     proxy = grab_raw_proxy()

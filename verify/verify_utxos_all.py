@@ -3,15 +3,15 @@
 
 """This program starts at block _1_ and verifies Unspent Transaction Outputs and amounts _and_ the scripts"""
 
-import hashlib
+# import hashlib
 from decimal import Decimal
 from pprint import pprint
 
-from ecdsa import VerifyingKey, SECP256k1
+# from ecdsa import VerifyingKey, SECP256k1
 
-from bitcoin_lib import grab_raw_proxy
+from bitcoin_lib import grab_raw_proxy, dump_utxos, retrieve_utxos
 
-#pylint: disable=too-many-locals
+#pylint: disable=too-many-locals,too-many-branches,too-many-statements
 def verify(proxy, blockidx, utxos):
     blockhash = proxy.getblockhash(blockidx)
     block = proxy.getblock(blockhash)
@@ -25,12 +25,16 @@ def verify(proxy, blockidx, utxos):
     total_in = 0
     total_out = 0
     for transaction_id in transaction_ids:
+        if transaction_id in ("cca7507897abc89628f450e8b1e0c6fca4ec3f7b34cccf55f3f531c659ff4d79", "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16"):
+            dump_utxos(blockidx, utxos)
         raw_tx = proxy.getrawtransaction(transaction_id)
+        #pylint: disable=line-too-long
         # 0100000001c997a5e56e104102fa209c6a852dd90660a20b2d9c352423edce25857fcd3704000000004847304402204e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d0901ffffffff0200ca9a3b00000000434104ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84cac00286bee0000000043410411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3ac00000000
-        raw_tx_bytes = bytes([int((raw_tx[x:(x+2)]), 16) for x in range(0, len(raw_tx), 2)])
-        raw_tx_sha256_1 = hashlib.sha256(raw_tx_bytes).digest()
-        raw_tx_sha256_2 = hashlib.sha256(raw_tx_sha256_1).digest() # Think about endian-ness tho.
-        raw_tx_hash = raw_tx_sha256_2
+        #pylint: enable=line-too-long
+        # raw_tx_bytes = bytes([int((raw_tx[x:(x+2)]), 16) for x in range(0, len(raw_tx), 2)])
+        # raw_tx_sha256_1 = hashlib.sha256(raw_tx_bytes).digest()
+        # raw_tx_sha256_2 = hashlib.sha256(raw_tx_sha256_1).digest() # Think about endian-ness tho.
+        # raw_tx_hash = raw_tx_sha256_2
         decoded_tx = proxy.decoderawtransaction(raw_tx)
         vins = decoded_tx["vin"]
         vouts = decoded_tx["vout"]
@@ -52,7 +56,7 @@ def verify(proxy, blockidx, utxos):
         total_in += in_amount
         total_out += out_amount
         total_tip += tip
-	
+
         if tip != 0:
             print(f"{blockidx:d}: {transaction_id:s} tip: {tip}")
 
@@ -106,7 +110,7 @@ def verify(proxy, blockidx, utxos):
                     #      'vout': 0}
 
                         pprint(utxos[(purported_spend_txid, purported_spend_idx)])
-                    # TODO: Somehow we need to take the vin["scriptSig"]["asm"] and utxos[(...)]["scriptPubKey"]["asm"] and verify this...
+                    # Somehow we need to take the vin["scriptSig"]["asm"] and utxos[(...)]["scriptPubKey"]["asm"] and verify this...
                     #       As stated here, it presumes OP_CHECKSIG tho. But, let's cross the more complicated transactions after we figure
                     #       out the ecdsa business.
                     #     {'n': 0,
@@ -135,17 +139,24 @@ def verify(proxy, blockidx, utxos):
 
     assert coinbase_amount is not None
     assert total_tip == total_in - total_out
-    assert coinbase_amount == block_reward + total_tip, (coinbase_amount, block_reward, total_tip)
-#pylint: enable=too-many-locals
+    assert coinbase_amount <= block_reward + total_tip, (coinbase_amount, block_reward, total_tip)
+#pylint: enable=too-many-locals,too-many-branches,too-many-statements
 
 def main():
     proxy = grab_raw_proxy()
 
-    utxos = {}
+
     maxblock = proxy.getblockchaininfo()["blocks"]
 
-    for blockidx in range(1, maxblock):
+    utxos, last_blockidx = retrieve_utxos()
+
+    for blockidx in range(1+last_blockidx, maxblock):
         verify(proxy, blockidx, utxos)
+        last_blockidx = blockidx
+        if last_blockidx % 1024 == 0:
+            dump_utxos(last_blockidx, utxos)
+
+    dump_utxos(last_blockidx, utxos)
 
 if __name__ == "__main__":
     main()

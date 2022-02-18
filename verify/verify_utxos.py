@@ -4,8 +4,9 @@
 """This program starts at block _1_ and _simply_ verifies Unspent Transaction Outputs.
    It does _not_ verify that enough money was in the inputs and outputs."""
 
+# import hashlib
 from pprint import pprint
-from bitcoin_lib import grab_raw_proxy
+from bitcoin_lib import grab_raw_proxy, retrieve_utxos
 
 def verify(proxy, blockidx, utxos):
     blockhash = proxy.getblockhash(blockidx)
@@ -40,10 +41,12 @@ def verify(proxy, blockidx, utxos):
 def main():
     proxy = grab_raw_proxy()
 
-    utxos = {}
+
     maxblock = proxy.getblockchaininfo()["blocks"]
 
-    for blockidx in range(1, maxblock):
+    utxos, last_blockidx = retrieve_utxos()
+
+    for blockidx in range(1+last_blockidx, maxblock):
         verify(proxy, blockidx, utxos)
 
 if __name__ == "__main__":
