@@ -17,6 +17,7 @@ from bitcoin_lib import grab_raw_proxy
 
 #pylint: disable=too-many-locals,too-many-branches,too-many-statements
 def verify(proxy, blockidx, utxos):
+    """Verify a particular blockidx (this presumes the utxos here are valid.)"""
     blockhash = proxy.getblockhash(blockidx)
     block = proxy.getblock(blockhash)
     half = Decimal(1) / Decimal(2)
@@ -29,11 +30,69 @@ def verify(proxy, blockidx, utxos):
     total_in = 0
     total_out = 0
     for transaction_id in transaction_ids:
-        if transaction_id in ("cca7507897abc89628f450e8b1e0c6fca4ec3f7b34cccf55f3f531c659ff4d79", "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16"):
-            pass
         raw_tx = proxy.getrawtransaction(transaction_id)
+# I think the _actual_ pizza transaction is _not_ in block 57044, as per the stack exchange article, but in 57043.
+# It's transaction id is a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d. Or perhaps more accurately,
+# 57043 is some guy _buying_ the pizza with bitcoin
+# 57044 is the pizza store person doing *something* with the bitcoin they just received.
+        # if transaction_id in ("cca7507897abc89628f450e8b1e0c6fca4ec3f7b34cccf55f3f531c659ff4d79", "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16"):
+        # if transaction_id in ("a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",):
+        if transaction_id in ("cca7507897abc89628f450e8b1e0c6fca4ec3f7b34cccf55f3f531c659ff4d79",):
+            print("pizza", raw_tx)
         #pylint: disable=line-too-long
-        # 0100000001c997a5e56e104102fa209c6a852dd90660a20b2d9c352423edce25857fcd3704000000004847304402204e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d0901ffffffff0200ca9a3b00000000434104ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84cac00286bee0000000043410411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3ac00000000
+
+# Full piza transaction: 01000000018dd4f5fbd5e980fc02f35c6ce145935b11e284605bf599a13c6d415db55d07a1000000008b4830450221009908144ca6539e09512b9295c8a27050d478fbb96f8addbc3d075544dc41328702201aa528be2b907d316d2da068dd9eb1e23243d97e444d59290d2fddf25269ee0e0141042e930f39ba62c6534ee98ed20ca98959d34aa9e057cda01cfd422c6bab3667b76426529382c23f42b9b08d7832d4fee1d6b437a8526e59667ce9c4e9dcebcabbffffffff0200719a81860000001976a914df1bd49a6c9e34dfa8631f2c54cf39986027501b88ac009f0a5362000000434104cd5e9726e6afeae357b1806be25a4c3d3811775835d235417ea746b7db9eeab33cf01674b944c64561ce3388fa1abd0fa88b06c44ce81e2234aa70fe578d455dac00000000
+
+# What follows is our understanding of what is _in_ the pizza transaction
+# Version (fixed at 1, little endian)
+# 01000000
+
+# number of inputs (?)
+# 01 (1 byte)
+
+# incoming transaction (coins that we will spend)
+# 8dd4f5fbd5e980fc02f35c6ce145935b11e284605bf599a13c6d415db55d07a1 => reversed becomes a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d
+
+# index 0
+# 00000000
+
+# script: 8b = 8 * 16 + 11 = 139 bytes or 278 hexadecimal digits
+# 8b
+#     (These are all _under_ the "8b (139 bytes)" that is mentioned above.)
+#     48 <= Length of Signature
+#     30450221009908144ca6539e09512b9295c8a27050d478fbb96f8addbc3d075544dc41328702201aa528be2b907d316d2da068dd9eb1e23243d97e444d59290d2fddf25269ee0e01
+#     41 <= Length of public address
+#     042e930f39ba62c6534ee98ed20ca98959d34aa9e057cda01cfd422c6bab3667b76426529382c23f42b9b08d7832d4fee1d6b437a8526e59667ce9c4e9dcebcabb
+
+# sequence number
+# ffffffff
+
+# number of outputs (?)
+# 02
+
+# 1st output
+# Amount
+# 00719a8186000000 => reversed and turned to an int becomes 577700000000 satoshis
+
+# lock script length
+# 19
+
+# lock script
+# 76a914df1bd49a6c9e34dfa8631f2c54cf39986027501b88ac
+
+# 2nd output
+# Amount
+# 009f0a5362000000 => reversed and turned to an int becomes 422300000000 satoshis
+
+# lock script length
+# 43
+# 4104cd5e9726e6afeae357b1806be25a4c3d3811775835d235417ea746b7db9eeab33cf01674b944c64561ce3388fa1abd0fa88b06c44ce81e2234aa70fe578d455dac
+
+# What is this? (last 8 bytes)
+# Locktime (0 in this case)
+# 00000000
+
+# We don't know what the first 9 bytes are and the last 8 bytes are.)
         #pylint: enable=line-too-long
         # raw_tx_bytes = bytes([int((raw_tx[x:(x+2)]), 16) for x in range(0, len(raw_tx), 2)])
         # raw_tx_sha256_1 = hashlib.sha256(raw_tx_bytes).digest()
@@ -94,36 +153,24 @@ def verify(proxy, blockidx, utxos):
                     # https://www.blockchain.com/btc/block/170
                     # Let's use block 170 as in that doc in these comments:
                     # Pizza transaction explanation: https://bitcoin.stackexchange.com/questions/32305/how-does-the-ecdsa-verification-algorithm-work-during-transaction
+                    # https://en.bitcoin.it/wiki/Script
 
                     print(f"{blockidx:d}: {transaction_id:s}:{vin_idx:d}: Burned {purported_spend_txid:s}:{purported_spend_idx:d}")
                     # 170: f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16:0: Burned 0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9:0
 
                     if transaction_id == "cca7507897abc89628f450e8b1e0c6fca4ec3f7b34cccf55f3f531c659ff4d79":
+                        print("vin")
                         pprint(vin)
-                    #
-# 304402204e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d09
-# 30440220
-# 4e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd41
-# 0220
-# 181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d09
-# 01
-                    #     {'scriptSig': {'asm': '304402204e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d09[ALL]',
-                    #                    'hex': '47304402204e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d0901'},
-                    #      'sequence': 4294967295,
-                    #      'txid': '0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9',
-                    #      'vout': 0}
-
+# 48 = 64+8 = 72
+# 30450221009908144ca6539e09512b9295c8a27050d478fbb96f8addbc3d075544dc41328702201aa528be2b907d316d2da068dd9eb1e23243d97e444d59290d2fddf25269ee0e01
+# 41
+# 042e930f39ba62c6534ee98ed20ca98959d34aa9e057cda01cfd422c6bab3667b76426529382c23f42b9b08d7832d4fee1d6b437a8526e59667ce9c4e9dcebcabb
+# 042e930f39ba...dcebcabb somehow maps to 17SkEw2md5avVNyYgj6RiXuQKNwkXaxFyQ: Come back to this later.
+# 17SkEw2md5avVNyYgj6RiXuQKNwkXaxFyQ => 
+                        print("utxo")
                         pprint(utxos[(purported_spend_txid, purported_spend_idx)])
-                    # Somehow we need to take the vin["scriptSig"]["asm"] and utxos[(...)]["scriptPubKey"]["asm"] and verify this...
-                    #       As stated here, it presumes OP_CHECKSIG tho. But, let's cross the more complicated transactions after we figure
-                    #       out the ecdsa business.
-                    #     {'n': 0,
-                    #      'scriptPubKey': {'asm': '0411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3 '
-                    #                              'OP_CHECKSIG',
-                    #                       'hex': '410411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3ac',
-                    #                       'type': 'pubkey'},
-                    #      'value': Decimal('50.00000000')}
 
+                    
 
                     # comp_str = utxos[(purported_spend_txid, purported_spend_idx)]["scriptPubKey"]["asm"][0:130]
                     # verifying_key = VerifyingKey.from_string(bytearray.fromhex(comp_str), curve=NIST256p)

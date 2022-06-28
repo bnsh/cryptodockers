@@ -7,6 +7,7 @@
 from decimal import Decimal
 from pprint import pprint
 
+import ecdsa
 # from ecdsa import VerifyingKey, SECP256k1
 
 from bitcoin_lib import grab_raw_proxy, dump_utxos, retrieve_utxos
@@ -25,8 +26,6 @@ def verify(proxy, blockidx, utxos):
     total_in = 0
     total_out = 0
     for transaction_id in transaction_ids:
-        if transaction_id in ("cca7507897abc89628f450e8b1e0c6fca4ec3f7b34cccf55f3f531c659ff4d79", "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16"):
-            dump_utxos(blockidx, utxos)
         raw_tx = proxy.getrawtransaction(transaction_id)
         #pylint: disable=line-too-long
         # 0100000001c997a5e56e104102fa209c6a852dd90660a20b2d9c352423edce25857fcd3704000000004847304402204e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d0901ffffffff0200ca9a3b00000000434104ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84cac00286bee0000000043410411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3ac00000000
@@ -94,8 +93,6 @@ def verify(proxy, blockidx, utxos):
                     print(f"{blockidx:d}: {transaction_id:s}:{vin_idx:d}: Burned {purported_spend_txid:s}:{purported_spend_idx:d}")
                     # 170: f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16:0: Burned 0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9:0
 
-                    if transaction_id == "cca7507897abc89628f450e8b1e0c6fca4ec3f7b34cccf55f3f531c659ff4d79":
-                        pprint(vin)
                     #
 # 304402204e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d09
 # 30440220
@@ -109,7 +106,6 @@ def verify(proxy, blockidx, utxos):
                     #      'txid': '0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9',
                     #      'vout': 0}
 
-                        pprint(utxos[(purported_spend_txid, purported_spend_idx)])
                     # Somehow we need to take the vin["scriptSig"]["asm"] and utxos[(...)]["scriptPubKey"]["asm"] and verify this...
                     #       As stated here, it presumes OP_CHECKSIG tho. But, let's cross the more complicated transactions after we figure
                     #       out the ecdsa business.
@@ -121,9 +117,11 @@ def verify(proxy, blockidx, utxos):
                     #      'value': Decimal('50.00000000')}
 
 
-                    # comp_str = utxos[(purported_spend_txid, purported_spend_idx)]["scriptPubKey"]["asm"][0:130]
-                    # verifying_key = VerifyingKey.from_string(bytearray.fromhex(comp_str), curve=NIST256p)
-                    # verifying_key.verify(sig, tx_hash)
+                    print(utxos[(purported_spend_txid, purported_spend_idx)]["scriptPubKey"]["asm"])
+# 0411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3 OP_CHECKSIG
+                    comp_str = utxos[(purported_spend_txid, purported_spend_idx)]["scriptPubKey"]["asm"][0:130]
+                    verifying_key = ecdsa.VerifyingKey.from_string(bytearray.fromhex(comp_str), curve=ecdsa.SECP256k1)
+                    verifying_key.verify(sig, tx_hash)
                     # # sig should be a bytesarray of size 64
                     # # tx_hash is arbitrary sized, but since it's a sha256(sha256(transaction)) it'll be 256 bits = 32 bytes long.
 

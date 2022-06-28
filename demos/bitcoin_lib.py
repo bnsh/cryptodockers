@@ -12,6 +12,7 @@ import os
 import re
 import bz2
 import pickle
+import hashlib
 import tempfile
 from subprocess import check_call
 import bitcoin.rpc as bitcoin_rpc
