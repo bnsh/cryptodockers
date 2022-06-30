@@ -7,13 +7,69 @@ import os
 import re
 import bz2
 import pickle
-# import hashlib
+import hashlib
 from decimal import Decimal
 from pprint import pprint
 
-# from ecdsa import VerifyingKey, SECP256k1
+import ecdsa
 
 from bitcoin_lib import grab_raw_proxy
+
+def hasher(hashalg, value):
+    hashalg = hashlib.new(hashalg)
+    hashalg.update(value)
+    return hashalg.digest()
+
+def tohex(byts):
+    return "".join(f"{int(val):02x}" for val in byts)
+
+def extract_ecdsa_rs(dersig):
+# 30450221009908144ca6539e09512b9295c8a27050d478fbb96f8addbc3d075544dc41328702201aa528be2b907d316d2da068dd9eb1e23243d97e444d59290d2fddf25269ee0e
+    assert int(dersig[0]) == 0x30 # ASN.1 Sequence
+    full_length = int(dersig[1])
+    assert full_length + 2 == len(dersig)
+    assert int(dersig[2]) == 0x02 # ASN.1 Int
+    rlen = int(dersig[3])
+    rbytes = dersig[4:(4+rlen)]
+    assert int(dersig[4+rlen]) == 0x02 # ASN.1 Int
+    slen = int(dersig[5+rlen])
+    sbytes = dersig[(5+rlen+1):(5+rlen+1+slen)]
+    return rbytes[-32:] + sbytes[-32:]
+
+def extract_signature_pubkey(script_sig_hex):
+# 48
+# 30450221009908144ca6539e09512b9295c8a27050d478fbb96f8addbc3d075544dc41328702201aa528be2b907d316d2da068dd9eb1e23243d97e444d59290d2fddf25269ee0e01
+# 41
+# 042e930f39ba62c6534ee98ed20ca98959d34aa9e057cda01cfd422c6bab3667b76426529382c23f42b9b08d7832d4fee1d6b437a8526e59667ce9c4e9dcebcabb
+    script_sig = bytearray.fromhex(script_sig_hex)
+    length = int(script_sig[0])-1 # Minus one because this signature has a SIGHASH_ALL appended.
+    pubkey_length = int(script_sig[1+length+1])
+    pubkey = script_sig[(length+3):(length+3+pubkey_length)]
+    return script_sig[1:1+length], pubkey
+
+def update_construction(constructed, vin_idx, funding_script_hex):
+    """Update vin_idx of constructed, which should be the raw_transaction _at first_, but
+       will gradually get modified to be something to be hashed and verified."""
+
+    funding_script = bytearray.fromhex(funding_script_hex)
+    assert constructed[0:4] == bytearray.fromhex("01000000") # Version should be 1 (little endian)
+    num_inputs = int(constructed[4])
+
+    pos = 5
+    positions = []
+    for inpidx in range(0, num_inputs):
+        spend_txid = constructed[pos:(pos+32)] # sha256 txid
+        spend_idx = constructed[(pos+32):(pos+32+4)] # 32 bit index into utxo specified by txid (in the utxo which index are we talking about.)
+
+        input_script_length = constructed[(pos+32+4)]
+        positions.append((pos+32+4, pos+32+4+1+input_script_length))
+
+        pos += 32+4+1+input_script_length+1
+        pos += 4    # sequence number (Does this belong inside the loop or outside the loop? Basically is there a sequence number
+                    # after each input, or after _all_ the inputs?)
+
+    newconstruction = constructed[0:positions[vin_idx][0]] + bytearray([len(funding_script)]) + funding_script + constructed[positions[vin_idx][1]:]
+    return newconstruction
 
 #pylint: disable=too-many-locals,too-many-branches,too-many-statements
 def verify(proxy, blockidx, utxos):
@@ -141,6 +197,9 @@ def verify(proxy, blockidx, utxos):
             print(f"coinbase_amount: {coinbase_amount}")
         assert tip >= 0, (blockidx, blockhash, transaction_id, tip)
 
+        constructed = bytearray.fromhex(raw_tx)
+        dersig = None
+        pubkey = None
         for vin_idx, vin in enumerate(vins):
             # Coinbase transactions have no "inputs" to check, they come from God (Satoshi).
             if "coinbase" not in vin:
@@ -170,6 +229,33 @@ def verify(proxy, blockidx, utxos):
                         print("utxo")
                         pprint(utxos[(purported_spend_txid, purported_spend_idx)])
 
+
+# vin
+# {'scriptSig': {'asm': '30450221009908144ca6539e09512b9295c8a27050d478fbb96f8addbc3d075544dc41328702201aa528be2b907d316d2da068dd9eb1e23243d97e444d59290d2fddf25269ee0e[ALL] '
+#                       '042e930f39ba62c6534ee98ed20ca98959d34aa9e057cda01cfd422c6bab3667b76426529382c23f42b9b08d7832d4fee1d6b437a8526e59667ce9c4e9dcebcabb',
+#                'hex': '4830450221009908144ca6539e09512b9295c8a27050d478fbb96f8addbc3d075544dc41328702201aa528be2b907d316d2da068dd9eb1e23243d97e444d59290d2fddf25269ee0e0141042e930f39ba62c6534ee98ed20ca98959d34aa9e057cda01cfd422c6bab3667b76426529382c23f42b9b08d7832d4fee1d6b437a8526e59667ce9c4e9dcebcabb'},
+#  'sequence': 4294967295,
+#  'txid': 'a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d',
+#  'vout': 0}
+# utxo
+# {'n': 0,
+#  'scriptPubKey': {'address': '17SkEw2md5avVNyYgj6RiXuQKNwkXaxFyQ',
+#                   'asm': 'OP_DUP OP_HASH160 '
+#                          '46af3fb481837fadbb421727f9959c2d32a36829 '
+#                          'OP_EQUALVERIFY OP_CHECKSIG',
+#                   'hex': '76a91446af3fb481837fadbb421727f9959c2d32a3682988ac',
+#                   'type': 'pubkeyhash'},
+#  'value': Decimal('10000.00000000')}
+
+# OP_DUP OP_HASH160 46af3fb481837fadbb421727f9959c2d32a36829 OP_EQUALVERIFY OP_CHECKSIG
+# 1976a91446af3fb481837fadbb421727f9959c2d32a3682988ac
+# 19 is the length (16+9 = 25 bytes)
+# 76 is OP_DUP (?)
+# a9 is OP_HASH160 (?)
+# 14 is a length
+# 46af3fb481837fadbb421727f9959c2d32a36829
+# 88 is OP_EQUALVERIFY (?)
+# ac is OP_CHECKSIG
                     
 
                     # comp_str = utxos[(purported_spend_txid, purported_spend_idx)]["scriptPubKey"]["asm"][0:130]
@@ -178,6 +264,8 @@ def verify(proxy, blockidx, utxos):
                     # # sig should be a bytesarray of size 64
                     # # tx_hash is arbitrary sized, but since it's a sha256(sha256(transaction)) it'll be 256 bits = 32 bytes long.
 
+                    dersig, pubkey = extract_signature_pubkey(vin["scriptSig"]["hex"])
+                    constructed = update_construction(constructed, vin_idx, utxos[(purported_spend_txid, purported_spend_idx)]["scriptPubKey"]["hex"])
                     del utxos[(purported_spend_txid, purported_spend_idx)]
                 else:
                     print("HOLY SHIT BATMAN!")
@@ -185,6 +273,17 @@ def verify(proxy, blockidx, utxos):
                     pprint(utxos)
                     raise Exception("OH NO!")
 
+        sighash_all = bytearray.fromhex("01000000")
+        constructed = constructed + sighash_all
+        
+        sha256_hash = hasher("sha256", constructed)
+        if dersig is None:
+            print("HOLY SHIT")
+        else:
+            ecdsasig = extract_ecdsa_rs(dersig)
+            verkey = ecdsa.VerifyingKey.from_string(pubkey, curve=ecdsa.SECP256k1)
+            verkey.verify(ecdsasig, sha256_hash, hashlib.sha256)
+            print("WOOT!")
         # Update the Unspent Transaction Outputs with this blocks outputs.
         utxos.update({(transaction_id, vout_idx): vout for vout_idx, vout in enumerate(vouts)})
 
