@@ -52,8 +52,8 @@ def update_construction(constructed, vin_idx, funding_script_hex):
        will gradually get modified to be something to be hashed and verified."""
 
     funding_script = bytearray.fromhex(funding_script_hex)
-    assert constructed[0:4] == bytearray.fromhex("01000000") # Version should be 1 (little endian)
-    num_inputs = int(constructed[4])
+    assert constructed[0:4] == bytearray.fromhex("01000000") # Version should be 1 (little endian). output: bytearray(b'\x01\x00\x00\x00')
+    num_inputs = int(constructed[4]) #huh....the len is 4? what is constructed[4] then...?
 
     pos = 5
     positions = []
@@ -74,8 +74,13 @@ def update_construction(constructed, vin_idx, funding_script_hex):
 #pylint: disable=too-many-locals,too-many-branches,too-many-statements
 def verify(proxy, blockidx, utxos):
     """Verify a particular blockidx (this presumes the utxos here are valid.)"""
+    
+    # get the blockhash from block idx, and block from the hash
     blockhash = proxy.getblockhash(blockidx)
     block = proxy.getblock(blockhash)
+    
+    # calculate the block reward, which is lower the higher the block number is
+    # block index doesn't necessarily correspond to block height...?
     half = Decimal(1) / Decimal(2)
     block_reward = 50 * half ** (blockidx//210000)
 
@@ -85,6 +90,8 @@ def verify(proxy, blockidx, utxos):
     total_tip = 0
     total_in = 0
     total_out = 0
+
+    # find the pizza txn in our block
     for transaction_id in transaction_ids:
         raw_tx = proxy.getrawtransaction(transaction_id)
 # I think the _actual_ pizza transaction is _not_ in block 57044, as per the stack exchange article, but in 57043.
@@ -154,24 +161,29 @@ def verify(proxy, blockidx, utxos):
         # raw_tx_sha256_1 = hashlib.sha256(raw_tx_bytes).digest()
         # raw_tx_sha256_2 = hashlib.sha256(raw_tx_sha256_1).digest() # Think about endian-ness tho.
         # raw_tx_hash = raw_tx_sha256_2
+        
+        # get the inputs and outputs in the transaction we're looking at
         decoded_tx = proxy.decoderawtransaction(raw_tx)
         vins = decoded_tx["vin"]
         vouts = decoded_tx["vout"]
 
         # EITHER a coinbase is in our vins, or it's not in _any_ of them.
+        # coinbase transactions ONLY contain the coinbase (len == 1)
         assert (all("coinbase" in vin for vin in vins) and len(vins) == 1) or all("coinbase" not in vin for vin in vins)
         in_amount = 0
         out_amount = 0
         if all("coinbase" in vin for vin in vins) and len(vins) == 1:
-            # If this is the coinbase transaction
+            # If this is the coinbase transaction, the output is all part of the coinbase txn
             assert coinbase_amount is None
             coinbase_amount = sum(vout["value"] for vout in vouts)
             tip = 0
         else:
+            # non-coinbase txns include miner tips 
             in_amount = sum(utxos[(vin["txid"], vin["vout"])]["value"] for vin in vins if "coinbase" not in vin)
             out_amount = sum(vout["value"] for vout in vouts)
             tip = in_amount - out_amount
-
+        
+        # block totals
         total_in += in_amount
         total_out += out_amount
         total_tip += tip
@@ -179,6 +191,9 @@ def verify(proxy, blockidx, utxos):
         if tip != 0:
             print(f"{blockidx:d}: {transaction_id:s} tip: {tip}")
 
+        # tips should be at least 0
+        # miners "pouring one out for Satoshi" claim 0 tips
+        # rude transactors could also not leave a tip, I guess 
         if tip < 0:
             print(f"blockidx: {blockidx:d}")
             print(f"blockhash: {blockhash:s}")
@@ -295,8 +310,11 @@ def verify(proxy, blockidx, utxos):
 def retrieve_utxos(utxofn=None):
     if utxofn is None:
         utxos_dir = "/tmp/utxos"
+        # utxos_re is utxos-57044.pickle.bz2 right now
         utxos_re = re.compile(r'^(.*/)?utxos-([0-9]+).pickle.bz2')
+        # sort the utxo filenames for the specified utxos (come back to this line)
         utxofns = sorted([os.path.join(utxos_dir, fname) for fname in os.listdir(utxos_dir) if utxos_re.match(fname) is not None], key=lambda fname: int(utxos_re.match(fname).group(2)), reverse=True)
+        # we care about the first utxo (ugh...why again?)
         utxofn = utxofns[0]
     with bz2.open(utxofn, "rb") as pfp:
         raw = pickle.load(pfp)
