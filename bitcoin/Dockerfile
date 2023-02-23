@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 LABEL maintainer="Binesh Bannerjee <binesh_binesh@hotmail.com>"
 
@@ -31,6 +31,9 @@ RUN \
 RUN mkdir -p /home/bitcoin/src/ /home/bitcoin/.bitcoin/
 RUN git clone https://github.com/bitcoin/bitcoin.git /home/bitcoin/src/bitcoin
 RUN ( cd /home/bitcoin/src/bitcoin && ./autogen.sh && ./configure --with-gui=no --disable-wallet --prefix="/usr/local/bitcoin" && make all install )
+
+# RUN git clone https://github.com/casey/ord.git /home/bitcoin/src/ord
+# RUN ( cd /home/bitcoin/src/ord && ./autogen.sh && ./configure --prefix="/usr/local/ord" && make all install )
 
 RUN find /home/bitcoin -print0 | xargs -0 chown bitcoin:bitcoin
 
