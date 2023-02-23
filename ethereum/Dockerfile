@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 LABEL maintainer="Binesh Bannerjee <binesh_binesh@hotmail.com>"
 
@@ -18,8 +18,8 @@ RUN \
 		vim \
 		wget \
 
-	&& wget -O /tmp/go.linux-arm64.tar.gz https://go.dev/dl/go1.20.linux-arm64.tar.gz \
-	&& rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.linux-arm64.tar.gz \
+	&& wget -O /tmp/go.linux-amd64.tar.gz https://go.dev/dl/go1.20.linux-amd64.tar.gz \
+	&& rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.linux-amd64.tar.gz \
 	&& ln -s /usr/local/go/bin/go /usr/local/bin/go \
 	&& ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt \
 	&& echo "ethereum ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-ethereum \
