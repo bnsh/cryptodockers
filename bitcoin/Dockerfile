@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 LABEL maintainer="Binesh Bannerjee <binesh_binesh@hotmail.com>"
 
-ENV TZ=US/Eastern
+ENV TZ=US/Eastern RUSTUP_HOME=/opt/rust CARGO_HOME=/opt/rust
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN \
 	groupadd -r bitcoin \
@@ -22,6 +22,7 @@ RUN \
 		libboost-filesystem-dev \
 		libboost-test-dev \
 		libevent-dev \
+		libssl-dev \
 		sudo \
 		git \
 		vim \
@@ -33,10 +34,11 @@ RUN mkdir -p /home/bitcoin/src/ /home/bitcoin/.bitcoin/
 RUN git clone https://github.com/bitcoin/bitcoin.git /home/bitcoin/src/bitcoin
 RUN ( cd /home/bitcoin/src/bitcoin && ./autogen.sh && ./configure --with-gui=no --disable-wallet --prefix="/usr/local/bitcoin" && make all install )
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /tmp/rust.sh && chmod 755 /tmp/rust.sh && export RUSTUP_HOME=/opt/rust CARGO_HOME=/opt/rust && echo "export RUSTUP_HOME=${RUSTUP_HOME} CARGO_HOME=${CARGO_HOME}" && bash /tmp/rust.sh -y --no-modify-path
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /tmp/rust.sh && chmod 755 /tmp/rust.sh && export PATH="${RUSTUP_HOME}/bin:${PATH}" && bash /tmp/rust.sh -y --no-modify-path && . /opt/rust/env && rustup default stable
 
-# RUN git clone https://github.com/casey/ord.git /home/bitcoin/src/ord
-# RUN ( cd /home/bitcoin/src/ord && ./autogen.sh && ./configure --prefix="/usr/local/ord" && make all install )
+RUN git clone https://github.com/casey/ord.git /home/bitcoin/src/ord
+RUN ( . /opt/rust/env &&  cd /home/bitcoin/src/ord && cargo build --release )
+RUN cp -pv /home/bitcoin/src/ord/target/release/ord /usr/local/bin/ord
 
 RUN find /home/bitcoin -print0 | xargs -0 chown bitcoin:bitcoin
 
