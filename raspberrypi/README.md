@@ -18,11 +18,11 @@ After installing Ubuntu on the Pi, do
 10. ```sudo addgroup "`id -nu`" docker```
 11. ```sudo addgroup --system supervisord```
 12. ```sudo addgroup "`id -nu`" supervisord```
-13. ```sudo /sbin/shutdown -r now```
-14. \# **Copy local-demo.mk to local.mk and adjust parameters to your needs. The only thing that might need changing is USERNAME.**
-15. ```sudo mkdir -p /cryptocurrency``` # **If you have an external hard drive, there are additional steps here!** (Also, if you adjusted the "CRYPTOCURRENCY_ROOT" in local.mk, then this directory will need to be the same as whatever you specified there.)
-16. ```sudo cp -p "${HOME}/src/cryptodockers/raspberrypi/root.conf" /etc/supervisor/conf.d/root.conf```
-17. ```sudo cp -p "${HOME}/src/cryptodockers/raspberrypi/chown-socket.conf" /etc/supervisor/conf.d/chown-socket.conf```
+13. ```sudo cp -p "${HOME}/src/cryptodockers/raspberrypi/root.conf" /etc/supervisor/conf.d/root.conf```
+14. ```sudo cp -p "${HOME}/src/cryptodockers/raspberrypi/chown-socket.conf" /etc/supervisor/conf.d/chown-socket.conf```
+15. ```sudo /sbin/shutdown -r now```
+16. \# **Copy local-demo.mk to local.mk and adjust parameters to your needs. The only thing that might need changing is USERNAME.**
+17. ```sudo mkdir -p /cryptocurrency``` # **If you have an external hard drive, there are additional steps here!** (Also, if you adjusted the "CRYPTOCURRENCY_ROOT" in local.mk, then this directory will need to be the same as whatever you specified there.)
 18. ```sudo rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/cryptoproxy```
 19. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/cryptoproxy" /etc/nginx/sites-available/cryptoproxy```
 20. ```sudo ln -s /etc/nginx/sites-available/cryptoproxy /etc/nginx/sites-enabled/cryptoproxy```
@@ -40,3 +40,4 @@ After installing Ubuntu on the Pi, do
 32. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make ethereum.conf )```
 33. ```sudo cp -p "${HOME}/src/cryptodockers/ethereum-pi/ethereum.conf" /etc/supervisor/conf.d/```
 34. ```sudo /sbin/shutdown -r now```
+
