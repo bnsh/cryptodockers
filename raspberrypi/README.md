@@ -21,20 +21,22 @@ After installing Ubuntu on the Pi, do
 13. ```sudo /sbin/shutdown -r now```
 14. \# **Copy local-demo.mk to local.mk and adjust parameters to your needs. The only thing that might need changing is USERNAME.**
 15. ```sudo mkdir -p /cryptocurrency``` # **If you have an external hard drive, there are additional steps here!** (Also, if you adjusted the "CRYPTOCURRENCY_ROOT" in local.mk, then this directory will need to be the same as whatever you specified there.)
-16. ```sudo rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/cryptoproxy```
-17. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/cryptoproxy" /etc/nginx/sites-available/cryptoproxy```
-18. ```sudo ln -s /etc/nginx/sites-available/cryptoproxy /etc/nginx/sites-enabled/cryptoproxy```
-19. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/bitcoin.conf" /etc/nginx/snippets/```
-20. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/ethereum.conf" /etc/nginx/snippets/```
-21. ```sudo systemctl restart nginx```
-22. \# **If** this is a bitcoin node:
-23. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make build-force )``` _# Took 162m5.510s_
-24. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make cache )```
-25. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make bitcoin.conf )```
-26. ```sudo cp -p "${HOME}/src/cryptodockers/bitcoin/bitcoin.conf" /etc/supervisor/conf.d/```
-27. \# **If** this is an ethereum node:
-28. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )``` _# Took 10m7.479s_
-29. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
-30. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make ethereum.conf )```
-31. ```sudo cp -p "${HOME}/src/cryptodockers/ethereum-pi/ethereum.conf" /etc/supervisor/conf.d/```
-32. ```sudo /sbin/shutdown -r now```
+16. ```sudo cp -p "${HOME}/src/cryptodockers/raspberrypi/root.conf" /etc/supervisor/conf.d/root.conf```
+17. ```sudo cp -p "${HOME}/src/cryptodockers/raspberrypi/chown-socket.conf" /etc/supervisor/conf.d/chown-socket.conf```
+18. ```sudo rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/cryptoproxy```
+19. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/cryptoproxy" /etc/nginx/sites-available/cryptoproxy```
+20. ```sudo ln -s /etc/nginx/sites-available/cryptoproxy /etc/nginx/sites-enabled/cryptoproxy```
+21. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/bitcoin.conf" /etc/nginx/snippets/```
+22. ```sudo cp -p "${HOME}/src/cryptodockers/nginx/ethereum.conf" /etc/nginx/snippets/```
+23. ```sudo systemctl restart nginx```
+24. \# **If** this is a bitcoin node:
+25. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make build-force )``` _# Took 162m5.510s_
+26. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make cache )```
+27. ```( cd "${HOME}/src/cryptodockers/bitcoin" && make bitcoin.conf )```
+28. ```sudo cp -p "${HOME}/src/cryptodockers/bitcoin/bitcoin.conf" /etc/supervisor/conf.d/```
+29. \# **If** this is an ethereum node:
+30. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make build-force )``` _# Took 10m7.479s_
+31. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make cache )```
+32. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make ethereum.conf )```
+33. ```sudo cp -p "${HOME}/src/cryptodockers/ethereum-pi/ethereum.conf" /etc/supervisor/conf.d/```
+34. ```sudo /sbin/shutdown -r now```
