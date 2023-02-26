@@ -1,6 +1,6 @@
 docker.io
-openssh-server
 make
-python3-pip
 nginx-full
+openssh-server
+python3-dev
 supervisor

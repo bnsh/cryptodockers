@@ -1,4 +1,5 @@
+docker
+pip
 pylint
 python-bitcoinlib
 web3
-docker
