@@ -1,4 +1,6 @@
+build-essential
 docker.io
+libsqlite3-dev
 make
 nginx-full
 openssh-server
