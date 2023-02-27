@@ -48,7 +48,7 @@ RUN \
 
 RUN mkdir -p /home/bitcoin/src/ /home/bitcoin/.bitcoin/
 RUN git clone https://github.com/bitcoin/bitcoin.git /home/bitcoin/src/bitcoin
-RUN ( cd /home/bitcoin/src/bitcoin && ./autogen.sh && ./configure --with-gui=no --disable-wallet --prefix="/usr/local/bitcoin" && make all install )
+RUN ( cd /home/bitcoin/src/bitcoin && ./autogen.sh && ./configure --prefix="/usr/local/bitcoin" && make all install )
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /tmp/rust.sh && chmod 755 /tmp/rust.sh && export PATH="${RUSTUP_HOME}/bin:${PATH}" && bash /tmp/rust.sh -y --no-modify-path && . /opt/rust/env && rustup default stable
 
