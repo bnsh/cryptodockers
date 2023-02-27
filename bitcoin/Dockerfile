@@ -30,7 +30,7 @@ RUN \
 		libsqlite3-dev \
 		libssl-dev \
 		libtool \
-		libzmq3-dev
+		libzmq3-dev \
 		pkg-config \
 		python3 \
 		python3-dev \
