@@ -9,24 +9,25 @@ RUN \
 	&& useradd -m -r -s /bin/bash -g bitcoin bitcoin \
 	&& apt-get update -y \
 	&& apt-get install -y \
-		build-essential \
-		bsdmainutils \
 		autoconf \
-		libtool \
-		pkg-config \
-		supervisor \
-		supervisor-doc \
-		rsync \
+		bsdmainutils \
+		build-essential \
+		curl \
+		git \
 		libboost-dev \
-		libboost-system-dev \
 		libboost-filesystem-dev \
+		libboost-system-dev \
 		libboost-test-dev \
 		libevent-dev \
+		libsqlite3-dev \
 		libssl-dev \
+		libtool \
+		pkg-config \
+		rsync \
 		sudo \
-		git \
+		supervisor \
+		supervisor-doc \
 		vim \
-		curl \
 	&& echo "bitcoin ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-bitcoin \
 	&& /bin/true
 
