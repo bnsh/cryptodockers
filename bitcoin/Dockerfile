@@ -10,8 +10,8 @@ RUN \
 	&& apt-get update -y \
 	&& apt-get install -y \
 		autoconf \
-		autotools-dev \
 		automake \
+		autotools-dev \
 		bsdmainutils \
 		build-essential \
 		curl \
@@ -21,16 +21,27 @@ RUN \
 		libboost-system-dev \
 		libboost-test-dev \
 		libevent-dev \
+		libminiupnpc-dev \
+		libnatpmp-dev \
+		libqrencode-dev \
+		libqt5core5a \
+		libqt5dbus5 \
+		libqt5gui5 \
 		libsqlite3-dev \
 		libssl-dev \
 		libtool \
+		libzmq3-dev
 		pkg-config \
 		python3 \
 		python3-dev \
+		qttools5-dev \
+		qttools5-dev-tools \
+		qtwayland5 \
 		rsync \
 		sudo \
 		supervisor \
 		supervisor-doc \
+		systemtap-sdt-dev \
 		vim \
 	&& echo "bitcoin ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-bitcoin \
 	&& /bin/true
