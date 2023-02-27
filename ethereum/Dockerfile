@@ -5,8 +5,9 @@ LABEL maintainer="Binesh Bannerjee <binesh_binesh@hotmail.com>"
 ENV TZ=US/Eastern
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN \
-	groupadd -r ethereum \
-	&& useradd -m -r -s /bin/bash -g ethereum ethereum \
+	adduser --gecos ethereum ethereum \
+	&& addgroup --system supervisord \
+	&& addgroup ethereum supervisord \
 	&& apt-get update -y \
 	&& apt-get install -y \
 		build-essential \

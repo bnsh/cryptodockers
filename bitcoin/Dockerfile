@@ -5,8 +5,9 @@ LABEL maintainer="Binesh Bannerjee <binesh_binesh@hotmail.com>"
 ENV TZ=US/Eastern RUSTUP_HOME=/opt/rust CARGO_HOME=/opt/rust
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN \
-	groupadd -r bitcoin \
-	&& useradd -m -r -s /bin/bash -g bitcoin bitcoin \
+	adduser --gecos bitcoin bitcoin \
+	&& addgroup --system supervisord \
+	&& addgroup bitcoin supervisord \
 	&& apt-get update -y \
 	&& apt-get install -y \
 		autoconf \
