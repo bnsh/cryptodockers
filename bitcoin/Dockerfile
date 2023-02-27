@@ -10,6 +10,8 @@ RUN \
 	&& apt-get update -y \
 	&& apt-get install -y \
 		autoconf \
+		autotools-dev \
+		automake \
 		bsdmainutils \
 		build-essential \
 		curl \
@@ -23,6 +25,8 @@ RUN \
 		libssl-dev \
 		libtool \
 		pkg-config \
+		python3 \
+		python3-dev \
 		rsync \
 		sudo \
 		supervisor \
