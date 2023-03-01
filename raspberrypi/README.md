@@ -1,8 +1,6 @@
 # Raspberry Pi Notes
 
-So, first, all this is based on [Ubuntu Desktop 21.04 for Raspberry Pi](https://ubuntu.com/download/raspberry-pi) It *needs* to be 21.04, *not* 21.10! Unfortunately, 21.10 seems to have [an issue with Docker](https://forum.storj.io/t/ubuntu-21-10-os-update-problem-with-the-node/15763).
-
-* 2023-02-26: I'm working on getting this to work with 22.04.
+So, first, all this is based on [Ubuntu Desktop 22.04 for Raspberry Pi](https://ubuntu.com/download/raspberry-pi)
 
 After installing Ubuntu on the Pi, do
 
@@ -40,4 +38,3 @@ After installing Ubuntu on the Pi, do
 32. ```( cd "${HOME}/src/cryptodockers/ethereum-pi" && make ethereum.conf )```
 33. ```sudo cp -p "${HOME}/src/cryptodockers/ethereum-pi/ethereum.conf" /etc/supervisor/conf.d/```
 34. ```sudo /sbin/shutdown -r now```
-
