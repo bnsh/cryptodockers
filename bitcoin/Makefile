@@ -1,6 +1,7 @@
 include ../local.mk
 CRYPTOCURRENCY=bitcoin
 RPCPORT=8332
+ORDPORT=20546
 
 all:
 
@@ -13,13 +14,14 @@ build-force:
 # # I'm commenting these out, because _ultimately_ we'll run the $(CRYPTOCURRENCY)_node via supervisor, and it'll make sure things stay _up_...
 # # If you run them directly, they'll interfere with each other, since _both_ will be trying to write to $(CRYPTOCURRENCY_ROOT)..
 # run: build
-# 	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /bin/bash
+# 	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" -p "127.0.01:$(ORDPORT):$(ORDPORT)" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /bin/bash
 
 $(CRYPTOCURRENCY).conf: build $(CRYPTOCURRENCY).conf.tmpl
 	\
 		CRYPTOCURRENCY="$(CRYPTOCURRENCY)" \
 		CRYPTOCURRENCY_ROOT="$(CRYPTOCURRENCY_ROOT)" \
 		RPCPORT="$(RPCPORT)" \
+		ORDPORT="$(ORDPORT)" \
 		USERNAME="$(USERNAME)" \
 		envsubst < $(CRYPTOCURRENCY).conf.tmpl > $(CRYPTOCURRENCY).conf
 
@@ -27,7 +29,7 @@ $(CRYPTOCURRENCY).conf: build $(CRYPTOCURRENCY).conf.tmpl
 # # If you run them directly, they'll interfere with each other, since _both_ will be trying to write to $(CRYPTOCURRENCY_ROOT)..
 # daemon: build
 # 	docker container stop `docker container ls -a | grep "$(USERNAME)/$(CRYPTOCURRENCY)_node" | sed -e 's/[ 	][ 	]*/	/g' | cut -d'	' -f1` || true
-# 	docker container run -d --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" "$(USERNAME)/$(CRYPTOCURRENCY)_node"
+# 	docker container run -d --rm -v "$(CRYPTOCURRENCY_ROOT)/$(CRYPTOCURRENCY):/home/$(CRYPTOCURRENCY)" -p "127.0.0.1:$(RPCPORT):$(RPCPORT)/tcp" -p "127.0.0.1:$(ORDPORT):$(ORDPORT)/tcp" "$(USERNAME)/$(CRYPTOCURRENCY)_node"
 
 # This is safe to run even when being run via supervisor.
 attach:
@@ -45,5 +47,5 @@ attach:
 
 cache: build
 	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /bin/sh -c '/bin/mkdir -p "/cryptocurrency/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)/"; /bin/chown "$(CRYPTOCURRENCY):$(CRYPTOCURRENCY)" "/cryptocurrency/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/.$(CRYPTOCURRENCY)/"'
-	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /usr/bin/rsync -av --progress --delete --exclude=".$(CRYPTOCURRENCY)/" "/home/$(CRYPTOCURRENCY)/" "/cryptocurrency/$(CRYPTOCURRENCY)/"
-	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /usr/bin/rsync -av --progress --delete --exclude=".$(CRYPTOCURRENCY)/" "/home/$(CRYPTOCURRENCY)/" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/"
+	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /usr/bin/rsync -av --progress --delete --exclude=".$(CRYPTOCURRENCY)/" --exclude=".local/share/ord/index.redb" "/home/$(CRYPTOCURRENCY)/" "/cryptocurrency/$(CRYPTOCURRENCY)/"
+	docker container run -it --rm -v "$(CRYPTOCURRENCY_ROOT):/cryptocurrency" "$(USERNAME)/$(CRYPTOCURRENCY)_node" /usr/bin/rsync -av --progress --delete --exclude=".$(CRYPTOCURRENCY)/" --exclude=".local/share/ord/index.redb" "/home/$(CRYPTOCURRENCY)/" "/cryptocurrency/pristine/$(CRYPTOCURRENCY)/"

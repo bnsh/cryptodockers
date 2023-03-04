@@ -61,7 +61,7 @@ RUN find /home/bitcoin -print0 | xargs -0 chown bitcoin:bitcoin
 
 COPY supervisor.d /etc/supervisor/conf.d
 
-EXPOSE 8332
+EXPOSE 8332 20546
 
 USER root
 

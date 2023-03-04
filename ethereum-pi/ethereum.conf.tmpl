@@ -1,5 +1,5 @@
 [program:ethereum]
-command=/usr/bin/env docker container run --rm -v "${CRYPTOCURRENCY_ROOT}/${CRYPTOCURRENCY}:/home/${CRYPTOCURRENCY}" -p "127.0.0.1:${RPCPORT}:${RPCPORT}/tcp" "${USERNAME}/${CRYPTOCURRENCY}_node"
+command=/usr/bin/env docker container run --name ethereum --rm -v "${CRYPTOCURRENCY_ROOT}/${CRYPTOCURRENCY}:/home/${CRYPTOCURRENCY}" -p "127.0.0.1:${RPCPORT}:${RPCPORT}/tcp" "${USERNAME}/${CRYPTOCURRENCY}_node"
 autostart=true
 autorestart=true
 user=root
