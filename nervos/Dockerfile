@@ -5,9 +5,9 @@ LABEL maintainer="Binesh Bannerjee <binesh_binesh@hotmail.com>"
 ENV TZ=US/Eastern RUSTUP_HOME=/opt/rust CARGO_HOME=/opt/rust
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN \
-	adduser --gecos nervo nervo \
+	adduser --gecos nervos nervos \
 	&& addgroup --system supervisord \
-	&& addgroup nervo supervisord \
+	&& addgroup nervos supervisord \
 	&& apt-get update -y \
 	&& apt-get install -y \
 		autoconf \
@@ -48,19 +48,19 @@ RUN \
 		supervisor-doc \
 		systemtap-sdt-dev \
 		vim \
-	&& echo "nervo ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-nervo \
+	&& echo "nervos ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-nervos \
 	&& /bin/true
 
-RUN mkdir -p /home/nervo/src/ /home/nervo/.nervo/
-RUN ( git clone https://github.com/nervosnetwork/ckb.git /home/nervo/src/nervo && cd /home/nervo/src/nervo && git checkout master )
+RUN mkdir -p /home/nervos/src/ /home/nervos/.nervos/
+RUN ( git clone https://github.com/nervosnetwork/ckb.git /home/nervos/src/nervos && cd /home/nervos/src/nervos && git checkout master )
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /tmp/rust.sh && chmod 755 /tmp/rust.sh && export PATH="${RUSTUP_HOME}/bin:${PATH}" && bash /tmp/rust.sh -y --no-modify-path && . /opt/rust/env && rustup default stable
 
-RUN ( . /opt/rust/env && cd /home/nervo/src/nervo && make prod )
-RUN find /home/nervo/src/nervo -type f -name 'ckb' -print
-RUN cp -pv /home/nervo/src/nervo/target/prod/ckb /usr/local/bin/ckb
+RUN ( . /opt/rust/env && cd /home/nervos/src/nervos && make prod )
+RUN find /home/nervos/src/nervos -type f -name 'ckb' -print
+RUN cp -pv /home/nervos/src/nervos/target/prod/ckb /usr/local/bin/ckb
 
-RUN find /home/nervo -print0 | xargs -0 chown nervo:nervo
+RUN find /home/nervos -print0 | xargs -0 chown nervos:nervos
 
 COPY supervisor.d /etc/supervisor/conf.d
 

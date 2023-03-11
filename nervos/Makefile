@@ -1,5 +1,5 @@
 include ../local.mk
-CRYPTOCURRENCY=nervo
+CRYPTOCURRENCY=nervos
 RPCPORT=8332
 
 all:
