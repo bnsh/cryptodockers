@@ -40,7 +40,7 @@ After installing Ubuntu on the Pi, do
 34. ```sudo /sbin/shutdown -r now```
 35. \# **If** this is an nervos node:
 36. ```( cd "${HOME}/src/cryptodockers/nervos" && make build-force )```
-37. ```( cd "${HOME}/src/cryptodockers/nervos" && make cache )```
+37. ```( cd "${HOME}/src/cryptodockers/nervos" && make cache )``` _# Took 169m35.080s_
 38. ```( cd "${HOME}/src/cryptodockers/nervos" && make nervos.conf )```
 39. ```sudo cp -p "${HOME}/src/cryptodockers/nervos/nervos.conf" /etc/supervisor/conf.d/```
 40. ```sudo /sbin/shutdown -r now```
