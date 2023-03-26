@@ -43,6 +43,7 @@ RUN \
 		supervisor \
 		supervisor-doc \
 		systemtap-sdt-dev \
+		tmux \
 		vim \
 	&& echo "bitcoin ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-bitcoin \
 	&& /bin/true
@@ -56,6 +57,10 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /tmp/rust.sh && 
 RUN git clone https://github.com/casey/ord.git /home/bitcoin/src/ord
 RUN ( . /opt/rust/env &&  cd /home/bitcoin/src/ord && cargo build --release )
 RUN cp -pv /home/bitcoin/src/ord/target/release/ord /usr/local/bin/ord
+
+COPY etc/vimrc /home/bitcoin/.vimrc
+COPY etc/tmux.conf /home/bitcoin/.tmux.conf
+COPY etc/bitcoin.cron /var/spool/cron/crontabs/bitcoin
 
 RUN find /home/bitcoin -print0 | xargs -0 chown bitcoin:bitcoin
 

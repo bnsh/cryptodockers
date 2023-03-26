@@ -1,0 +1,1 @@
+0 3 * * * /usr/bin/supervisorctl start ord-index > /dev/null 2>&1

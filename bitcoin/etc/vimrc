@@ -1,0 +1,3 @@
+set nocompatible
+au BufRead,BufNewFile *.py set shiftwidth=4 tabstop=4 expandtab
+au BufRead,BufNewFile *.R set tabstop=2 shiftwidth=2 expandtab 
