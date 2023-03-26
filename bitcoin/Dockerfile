@@ -63,7 +63,7 @@ COPY etc/vimrc /home/bitcoin/.vimrc
 COPY etc/tmux.conf /home/bitcoin/.tmux.conf
 COPY etc/bitcoin.cron /var/spool/cron/crontabs/bitcoin
 
-RUN find /home/bitcoin -print0 | xargs -0 chown bitcoin:bitcoin
+RUN find /home/bitcoin /var/spool/cron/crontabs/bitcoin -print0 | xargs -0 chown bitcoin:bitcoin
 
 COPY supervisor.d /etc/supervisor/conf.d
 
