@@ -10,6 +10,7 @@ RUN \
 	&& addgroup bitcoin supervisord \
 	&& apt-get update -y \
 	&& apt-get install -y \
+		anacron \
 		autoconf \
 		automake \
 		autotools-dev \
