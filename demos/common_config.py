@@ -12,7 +12,7 @@ def search_for_configfn():
     candidates = [
         os.path.join(os.path.realpath(path), fname)
         for path in reversed([os.path.dirname(os.path.realpath(__file__))] + list(reduce(lambda acc, x: acc + [acc[-1] + "/" + x], os.getcwd().split("/")[1:], ["/"])) + ["/secrets"])
-        for fname in ("local.mk")
+        for fname in ("local.mk",)
     ]
     candidates = [cand for cand in candidates if os.path.exists(cand)]
     return candidates[0]
