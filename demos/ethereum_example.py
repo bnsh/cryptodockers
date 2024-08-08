@@ -14,7 +14,7 @@ def main():
     config = grab_config()
     host = config["ETHEREUMHOST"]
     web3 = Web3(Web3.HTTPProvider(f'http://{host:s}/ethereum/'))
-    if web3.isConnected():
+    if web3.is_connected():
         latest_block = web3.eth.get_block('latest')
         highest_block_number = latest_block.number
         for block_number in range(highest_block_number, -1, -1):
